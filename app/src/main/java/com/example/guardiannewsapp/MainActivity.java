@@ -1,27 +1,35 @@
 package com.example.guardiannewsapp;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.example.guardiannewsapp.adapters.GuardianNewsMainAdapter;
+import com.example.guardiannewsapp.models.Results;
 import com.example.guardiannewsapp.viewmodels.NewsDataViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
-
-import java.util.List;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
     private NewsDataViewModel mNewsDataViewModel;
-
+    @BindView(R.id.recycler_view_main)
+    RecyclerView recyclerViewMain;
+    RecyclerView.LayoutManager recyclerViewLayoutManager;
+    GuardianNewsMainAdapter guardianNewsMainAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,18 +37,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final TextView tv = findViewById(R.id.text_view_main);
+        ButterKnife.bind(this);
 
         mNewsDataViewModel = ViewModelProviders.of(this).get(NewsDataViewModel.class);
 
-        mNewsDataViewModel.getAllNews().observe(this, new Observer<List<NewsData>>() {
+        //retrieve data from repo
+        mNewsDataViewModel.init();
+
+        mNewsDataViewModel.getAllNews().observe(this, new Observer<List<Results>>() {
             @Override
-            public void onChanged(@Nullable final List<NewsData> words) {
+            public void onChanged(@Nullable final List<Results> results) {
                 // Update the cached copy of the words in the adapter.
-                tv.setText(words.get(0).getWEBURL());
+                guardianNewsMainAdapter.notifyDataChanged(results);
+                //tv.setText(results.get(6).getWebUrl());
             }
         });
-
+        guardianNewsMainAdapter = new GuardianNewsMainAdapter(this, mNewsDataViewModel.getAllNews().getValue());
+        recyclerViewLayoutManager = new LinearLayoutManager(this);
+        recyclerViewMain.setLayoutManager(recyclerViewLayoutManager);
+        recyclerViewMain.setHasFixedSize(true);
+        recyclerViewMain.setAdapter(guardianNewsMainAdapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -2,11 +2,13 @@ package com.example.guardiannewsapp;
 
 import android.content.Context;
 
+import com.example.guardiannewsapp.models.Results;
+
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {NewsData.class}, version = 1)
+@Database(entities = {Results.class}, version = 1)
 public abstract class NewsRoomDatabase extends RoomDatabase {
     public abstract NewsDAO newsDAO();
 

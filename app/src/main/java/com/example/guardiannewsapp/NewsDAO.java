@@ -1,5 +1,7 @@
 package com.example.guardiannewsapp;
 
+import com.example.guardiannewsapp.models.Results;
+
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -11,12 +13,12 @@ import androidx.room.Query;
 public interface NewsDAO {
 
     @Insert
-    void insert(NewsData newsData);
+    void insert(Results results);
 
     @Query("DELETE FROM news_table")
     void deleteAll();
 
     @Query("SELECT * from news_table ORDER BY webTitle ASC")
-    LiveData<List<NewsData>> getAllNews();
+    LiveData<List<Results>> getAllNews();
 }
 

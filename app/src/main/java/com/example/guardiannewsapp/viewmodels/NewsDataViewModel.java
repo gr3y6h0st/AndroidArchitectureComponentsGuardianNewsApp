@@ -1,28 +1,26 @@
 package com.example.guardiannewsapp.viewmodels;
 
-import android.app.Application;
-
-import com.example.guardiannewsapp.NewsData;
+import com.example.guardiannewsapp.models.Results;
 import com.example.guardiannewsapp.repositories.NewsDataRepository;
 
 import java.util.List;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
+public class NewsDataViewModel extends ViewModel {
 
-public class NewsDataViewModel extends AndroidViewModel {
+    private MutableLiveData<List<Results>> mAllNewsData;
+    private NewsDataRepository mRepository;
 
-    private LiveData<List<NewsData>> mAllNewsData;
-
-    //retrieve the data from the REPOSITORY class, by populating the Database.
-    public NewsDataViewModel(@NonNull Application application) {
-        super(application);
-        NewsDataRepository mRepository = new NewsDataRepository(application);
-        mRepository.fetchNewsData();
-        mAllNewsData = mRepository.getAllNews();
+    //retrieve the data from the REPOSITORY class, by populating the Database
+    public void init() {
+        if(mAllNewsData != null){
+            return;
+        }
+        mRepository = NewsDataRepository.getInstance();
+        mAllNewsData  = mRepository.fetchNewsData();
     }
 
-    public LiveData<List<NewsData>> getAllNews() {
+    public MutableLiveData<List<Results>> getAllNews() {
         return mAllNewsData; }
 }
